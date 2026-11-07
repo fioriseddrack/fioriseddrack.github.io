@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Piante e Fiori Roma di Seddrak">
+  <circle cx="32" cy="32" r="31" fill="#1F3B2D"/>
+  <path d="M32 46c-2 6-1 10 1 13" stroke="#8FBF9A" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M33 52c5-1 9-4 10-8-5 0-9 3-10 8z" fill="#8FBF9A"/>
+  <g fill="#B0124F" transform="translate(32 30)">
+    <path id="p" d="M0 0C-3-6-6-14-2-19c2-2 6-1 7 2 2 6-1 12-5 17z"/>
+    <use href="#p" transform="rotate(72)"/>
+    <use href="#p" transform="rotate(144)"/>
+    <use href="#p" transform="rotate(216)"/>
+    <use href="#p" transform="rotate(288)"/>
+  </g>
+  <circle cx="32" cy="30" r="4.5" fill="#F2B33D"/>
+  <circle cx="32" cy="30" r="2" fill="#fff"/>
+</svg>
