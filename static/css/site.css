@@ -104,7 +104,8 @@ figure { margin: 0; }
 .hero-photos { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 12px; }
 .hero-photos figure { overflow: hidden; border-radius: var(--radius); background: var(--sage); }
 .hero-photos img { width: 100%; height: 100%; object-fit: cover; }
-.hp-main { grid-column: 1 / -1; aspect-ratio: 4 / 3; }
+.hp-main { grid-column: 1 / -1; aspect-ratio: 4 / 5; }
+.hp-main img { object-position: 50% 35%; }
 .hp-a, .hp-b { aspect-ratio: 1; }
 
 /* ---------- Insegna del chiosco (l'elemento che caratterizza il sito) ---------- */
@@ -325,7 +326,7 @@ img.zoomable { cursor: zoom-in; }
   .hero-grid, .page-hero-grid, .about, .two, .kiosks-row { grid-template-columns: 1fr; }
   .hero { padding-top: 28px; }
   .hero-photos { order: -1; }
-  .hp-main { aspect-ratio: 16 / 10; }
+  .hp-main { aspect-ratio: 1 / 1; }
   .hp-a, .hp-b { display: none; }
   .tiles { grid-template-columns: 1fr 1fr; }
   .tile, .tile-1, .tile-2, .tiles-compact .tile { grid-column: span 1; }
