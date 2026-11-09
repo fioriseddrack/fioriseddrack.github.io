@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-title" content="Fiori Seddrak">
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
 <link rel="preload" href="/static/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/static/css/site.css?v=2">
+<link rel="stylesheet" href="/static/css/site.css?v=3">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://fioriseddrak.it/#organizzazione", "name": "Piante e Fiori Roma di Seddrak", "alternateName": ["Piante e Fiori Seddrak", "Piante e Fiori Seddrack", "Fiori Seddrak", "Fiori Seddrack", "Fiorista Seddrak Roma"], "url": "https://fioriseddrak.it/", "logo": "https://fioriseddrak.it/static/logo.svg", "email": "larosadeldesertoseddrak@gmail.com", "telephone": "+393899962511", "founder": {"@type": "Person", "name": "Youssef Seddrak"}, "sameAs": [], "description": "Fiorista a Roma con due chioschi di fiori e piante: Largo Ferdinando Gregorovius e Largo Santi Martiri dell'Uganda."}, {"@type": "Florist", "@id": "https://fioriseddrak.it/fioraio-largo-ferdinando-gregorovius/#chiosco", "name": "Piante e Fiori Roma di Seddrak – Largo Gregorovius", "parentOrganization": {"@id": "https://fioriseddrak.it/#organizzazione"}, "url": "https://fioriseddrak.it/fioraio-largo-ferdinando-gregorovius/", "telephone": "+393899962511", "image": "https://fioriseddrak.it/static/img/youssef-seddrak-cuore-di-rose-960.webp", "priceRange": "€€", "address": {"@type": "PostalAddress", "streetAddress": "Largo Ferdinando Gregorovius", "postalCode": "00179", "addressLocality": "Roma", "addressRegion": "RM", "addressCountry": "IT"}, "geo": {"@type": "GeoCoordinates", "latitude": 41.87207, "longitude": 12.51047}, "hasMap": "https://www.google.com/maps/search/?api=1&query=Largo+Ferdinando+Gregorovius+00179+Roma", "areaServed": [{"@type": "Place", "name": "Via Macedonia, Roma"}, {"@type": "Place", "name": "Appio Latino, Roma"}, {"@type": "Place", "name": "Tuscolano, Roma"}, {"@type": "Place", "name": "Re di Roma, Roma"}, {"@type": "Place", "name": "Furio Camillo, Roma"}]}, {"@type": "Florist", "@id": "https://fioriseddrak.it/fioraio-largo-santi-martiri-uganda/#chiosco", "name": "Piante e Fiori Roma di Seddrak – Largo Santi Martiri dell'Uganda", "parentOrganization": {"@id": "https://fioriseddrak.it/#organizzazione"}, "url": "https://fioriseddrak.it/fioraio-largo-santi-martiri-uganda/", "telephone": "+393899962511", "image": "https://fioriseddrak.it/static/img/chiosco-fiori-roma-960.webp", "priceRange": "€€", "address": {"@type": "PostalAddress", "streetAddress": "Largo Santi Martiri dell'Uganda", "postalCode": "00147", "addressLocality": "Roma", "addressRegion": "RM", "addressCountry": "IT"}, "geo": {"@type": "GeoCoordinates", "latitude": 41.8457, "longitude": 12.48768}, "hasMap": "https://www.google.com/maps/search/?api=1&query=Largo+Santi+Martiri+dell%27Uganda+00147+Roma", "areaServed": [{"@type": "Place", "name": "Montagnola, Roma"}, {"@type": "Place", "name": "Laurentina, Roma"}, {"@type": "Place", "name": "EUR, Roma"}, {"@type": "Place", "name": "Ardeatino, Roma"}, {"@type": "Place", "name": "Garbatella, Roma"}]}]}</script>
 <meta name="robots" content="noindex">
 
@@ -74,15 +74,34 @@
     </ol>
     <div class="paymethods">
   
-  <div class="paybox">
+  <div class="paybox paybox-iban">
     <h3>Bonifico bancario</h3>
-    <dl class="iban">
-      <dt>Intestatario</dt><dd>Seddrak Youssef Ghali Bassta</dd>
-      <dt>IBAN</dt><dd><span class="iban-code" id="iban">IT71 Z360 8105 1382 6862 4968 630</span> <button class="btn btn-light btn-sm" type="button" data-copy="#iban">Copia</button></dd>
-      <dt>Banca</dt><dd>Postepay S.p.A.</dd>
-      <dt>Causale</dt><dd>Fiori, il tuo nome e la data di consegna</dd>
-    </dl>
-    <p class="form-hint">Dopo il bonifico mandaci la ricevuta su WhatsApp: confermiamo subito l'ordine.</p>
+    <p class="iban-card-lead">Copia i dati con un tocco e incollali nell'app della tua banca.</p>
+    <div class="iban-card">
+      <div class="iban-row">
+        <span class="iban-label">IBAN</span>
+        <span class="iban-code" id="iban">IT71 Z360 8105 1382 6862 4968 630</span>
+        <button class="btn btn-rose btn-sm" type="button" data-copy="#iban" data-copied="IBAN copiato! Ora aprilo nell'app della tua banca.">Copia IBAN</button>
+      </div>
+      <div class="iban-row">
+        <span class="iban-label">Intestatario</span>
+        <span id="iban-holder">Seddrak Youssef Ghali Bassta</span>
+        <button class="btn btn-light btn-sm" type="button" data-copy="#iban-holder" data-keep-spaces>Copia</button>
+      </div>
+      <div class="iban-row"><span class="iban-label">Banca</span><span>Postepay S.p.A.</span></div>
+      <div class="iban-row">
+        <span class="iban-label">Causale</span>
+        <span id="iban-causale">Fiori – nome e data di consegna</span>
+        <button class="btn btn-light btn-sm" type="button" data-copy="#iban-causale" data-keep-spaces>Copia</button>
+      </div>
+      <button class="btn btn-ghost btn-sm iban-share" type="button" data-share-iban hidden
+        data-text="Bonifico a Piante e Fiori Roma di Seddrak&#10;Intestatario: Seddrak Youssef Ghali Bassta&#10;IBAN: IT71Z3608105138268624968630&#10;Banca: Postepay S.p.A.&#10;Causale: Fiori – nome e data di consegna">Invia i dati al telefono</button>
+    </div>
+    <div class="iban-speed">
+      <div><strong>⚡ Bonifico istantaneo</strong><span>Arriva in pochi secondi, anche nei festivi. Ideale per consegne oggi o domani. Di solito costa come un bonifico normale.</span></div>
+      <div><strong>🕑 Bonifico ordinario</strong><span>Arriva in 1–2 giorni lavorativi. Va bene se la consegna è tra qualche giorno.</span></div>
+    </div>
+    <p class="form-hint">Dopo il bonifico mandaci la ricevuta su <a href="https://wa.me/393899962511" rel="noopener" target="_blank">WhatsApp</a>: confermiamo subito l'ordine.</p>
   </div>
   
   <div class="paybox">
@@ -168,6 +187,15 @@
     <button class="btn btn-ghost btn-sm" type="button" data-install-close aria-label="Chiudi">Non ora</button>
   </div>
 </div>
-<script src="/static/js/site.js?v=2" defer></script>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<div class="promo" id="promo" hidden role="dialog" aria-labelledby="promo-t">
+  <button class="promo-x" type="button" data-promo-close aria-label="Chiudi">×</button>
+  <p class="promo-kicker">🌹 Fiori a domicilio a Roma Sud</p>
+  <p class="promo-t" id="promo-t">Scegli il giorno, al resto pensa Youssef.</p>
+  <a class="btn btn-rose" href="/prenota/" data-promo-go>Prenota ora!</a>
+</div>
+
+<script src="/static/js/site.js?v=3" defer></script>
 </body>
 </html>

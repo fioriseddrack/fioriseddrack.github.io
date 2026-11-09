@@ -202,6 +202,8 @@
           if (!res.ok || String(res.j.success) !== "true") throw new Error(res.j.message || "errore");
           track("prenotazione", "modulo");
           $("#prenota-wa").href = "https://wa.me/" + book.getAttribute("data-wa") + "?text=" + encodeURIComponent(summary());
+          window.addToCalendar(fd.get("Data"), "Fiori da " + "Piante e Fiori Roma di Seddrak",
+            (fd.get("Modalità") || "") + "\nProdotto: " + (fd.get("Prodotto") || "") + "\nInfo: 389 996 2511 (anche WhatsApp)");
           book.hidden = true;
           var ok = $("#prenota-ok"); ok.hidden = false; ok.focus(); ok.scrollIntoView();
         })
@@ -217,13 +219,128 @@
     });
   }
 
-  // Copia IBAN
+  // Avviso breve in basso
+  var toastT;
+  function toast(msg) {
+    var t = $("#toast"); if (!t) return;
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 3500);
+  }
+  function copyText(txt) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(txt);
+    return new Promise(function (ok, ko) {
+      var ta = document.createElement("textarea"); ta.value = txt; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy") ? ok() : ko(); } catch (e) { ko(e); } ta.remove();
+    });
+  }
+
+  // Copia IBAN, intestatario, causale
   $$("[data-copy]").forEach(function (b) {
+    var label = b.textContent;
     b.addEventListener("click", function () {
-      var txt = ($(b.getAttribute("data-copy")) || {}).textContent || "";
-      if (navigator.clipboard) navigator.clipboard.writeText(txt.replace(/\s+/g, "")).then(function () { b.textContent = "Copiato"; });
+      var txt = (($(b.getAttribute("data-copy")) || {}).textContent || "").trim();
+      if (!b.hasAttribute("data-keep-spaces")) txt = txt.replace(/\s+/g, "");
+      copyText(txt).then(function () {
+        b.textContent = "Copiato ✓"; setTimeout(function () { b.textContent = label; }, 2500);
+        toast(b.getAttribute("data-copied") || "Copiato!");
+        track("copia", b.getAttribute("data-copy"));
+      }, function () { toast("Tieni premuto sul testo per copiarlo"); });
     });
   });
+  var share = $("[data-share-iban]");
+  if (share && navigator.share) {
+    share.hidden = false;
+    share.addEventListener("click", function () {
+      navigator.share({ title: "Dati per il bonifico", text: share.getAttribute("data-text") }).catch(function () {});
+    });
+  }
+
+  // Calendario prenotazione
+  var MESI = ["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+  var GIORNI = ["lun","mar","mer","gio","ven","sab","dom"];
+  function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function nice(s) { var p = s.split("-"); var d = new Date(+p[0], p[1] - 1, +p[2]); return GIORNI[(d.getDay() + 6) % 7] + " " + d.getDate() + " " + MESI[d.getMonth()]; }
+  $$("[data-cal]").forEach(function (cal) {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var max = new Date(today); max.setDate(max.getDate() + 90);
+    var target = cal.getAttribute("data-target") ? $(cal.getAttribute("data-target")) : null;
+    var go = $("[data-cal-go]", cal), pick = $(".cal-pick", cal), grid = $(".cal-grid", cal);
+    var sel = (target && target.value) || new URLSearchParams(location.search).get("data") || "";
+    var view = new Date(today.getFullYear(), today.getMonth(), 1);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(sel)) { var p = sel.split("-"); view = new Date(+p[0], p[1] - 1, 1); } else sel = "";
+    function choose(v) {
+      sel = v;
+      if (target) { target.value = v; target.dispatchEvent(new Event("change")); }
+      if (go) { go.href = cal.getAttribute("data-book") + "?data=" + v; go.textContent = "Prenota ora per " + nice(v) + "!"; }
+      if (pick) { pick.innerHTML = "Hai scelto <strong></strong>."; $("strong", pick).textContent = nice(v); }
+      draw();
+    }
+    function draw() {
+      $(".cal-month", cal).textContent = MESI[view.getMonth()] + " " + view.getFullYear();
+      grid.innerHTML = "";
+      GIORNI.forEach(function (g) { var h = document.createElement("span"); h.className = "cal-dow"; h.textContent = g; grid.appendChild(h); });
+      var lead = (view.getDay() + 6) % 7;
+      for (var i = 0; i < lead; i++) grid.appendChild(document.createElement("span"));
+      var days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+      for (var d = 1; d <= days; d++) {
+        var date = new Date(view.getFullYear(), view.getMonth(), d), v = iso(date);
+        var b = document.createElement("button"); b.type = "button"; b.className = "cal-day"; b.textContent = d;
+        b.setAttribute("aria-label", nice(v));
+        if (date < today || date > max) b.disabled = true;
+        if (+date === +today) b.classList.add("is-today");
+        b.setAttribute("aria-pressed", v === sel ? "true" : "false");
+        b.addEventListener("click", (function (val) { return function () { choose(val); }; })(v));
+        grid.appendChild(b);
+      }
+      $("[data-cal-prev]", cal).disabled = view <= new Date(today.getFullYear(), today.getMonth(), 1);
+      $("[data-cal-next]", cal).disabled = new Date(view.getFullYear(), view.getMonth() + 1, 1) > max;
+    }
+    $("[data-cal-prev]", cal).addEventListener("click", function () { view.setMonth(view.getMonth() - 1); draw(); });
+    $("[data-cal-next]", cal).addEventListener("click", function () { view.setMonth(view.getMonth() + 1); draw(); });
+    if (target) target.addEventListener("input", function () {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(target.value)) { sel = target.value; var p = sel.split("-"); view = new Date(+p[0], p[1] - 1, 1); draw(); }
+    });
+    if (go) go.addEventListener("click", function () { track("prenota_ora", "calendario"); });
+    if (sel) choose(sel); else draw();
+  });
+
+  // Aggiungi al calendario (dopo la prenotazione)
+  window.addToCalendar = function (data, title, details) {
+    if (!data) return;
+    var d0 = data.replace(/-/g, ""), n = new Date(data + "T12:00:00"); n.setDate(n.getDate() + 1);
+    var d1 = iso(n).replace(/-/g, "");
+    var g = $("#cal-google"), f = $("#cal-ics");
+    if (g) g.href = "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(title) +
+      "&dates=" + d0 + "/" + d1 + "&details=" + encodeURIComponent(details);
+    if (f) {
+      var ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Fiori Seddrak//IT", "BEGIN:VEVENT",
+        "UID:" + Date.now() + "@fioriseddrak.it", "DTSTAMP:" + new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z",
+        "DTSTART;VALUE=DATE:" + d0, "DTEND;VALUE=DATE:" + d1, "SUMMARY:" + title,
+        "DESCRIPTION:" + details.replace(/\n/g, "\\n"), "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+      f.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+    }
+  };
+
+  // Popup "Prenota ora!"
+  var promo = $("#promo");
+  if (promo) {
+    var seen = function () { try { return Date.now() - Number(localStorage.getItem("promo-chiuso") || 0) < 1000 * 60 * 60 * 24 * 3; } catch (e) { return false; } };
+    var shown = false;
+    var show = function () {
+      if (shown || seen() || (inst && !inst.hidden)) return;
+      shown = true; promo.hidden = false; track("promo", "mostrato");
+    };
+    var hide = function () { promo.hidden = true; try { localStorage.setItem("promo-chiuso", String(Date.now())); } catch (e) { /* ok */ } };
+    var inst = $("#installa");
+    setTimeout(show, 20000);
+    window.addEventListener("scroll", function onS() {
+      if (window.scrollY > (document.body.scrollHeight - innerHeight) * 0.45) { window.removeEventListener("scroll", onS); setTimeout(show, 1500); }
+    }, { passive: true });
+    $("[data-promo-close]", promo).addEventListener("click", hide);
+    $("[data-promo-go]", promo).addEventListener("click", function () { track("prenota_ora", "popup"); hide(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !promo.hidden) hide(); });
+  }
 
   // App installabile (PWA)
   if ("serviceWorker" in navigator) {

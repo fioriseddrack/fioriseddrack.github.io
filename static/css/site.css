@@ -366,3 +366,58 @@ legend { font-family: var(--display); font-weight: 650; font-size: 1.25rem; colo
 /* ---------- Video ---------- */
 .videos { display: flex; flex-wrap: wrap; gap: 12px; }
 .videos video { width: min(300px, 100%); height: auto; aspect-ratio: 9 / 16; background: var(--leaf); border-radius: var(--radius); }
+
+/* ---------- Calendario prenotazione ---------- */
+.cal { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: 0 6px 20px rgba(31,59,45,.08); max-width: 420px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-month { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.2rem; color: var(--leaf); text-transform: capitalize; }
+.cal-nav { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: #fff; font-size: 1.4rem; line-height: 1; cursor: pointer; color: var(--leaf); }
+.cal-nav:disabled { opacity: .3; cursor: default; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+.cal-dow { font-size: .78rem; font-weight: 700; color: var(--muted); padding: 4px 0; }
+.cal-day { aspect-ratio: 1; border: 0; border-radius: 8px; background: var(--sage); font: inherit; font-weight: 600; cursor: pointer; color: var(--ink); min-height: 38px; }
+.cal-day:hover { background: #dfe8db; }
+.cal-day[disabled] { background: transparent; color: #b9c2bb; cursor: default; }
+.cal-day.is-today { box-shadow: inset 0 0 0 2px var(--sun); }
+.cal-day[aria-pressed="true"] { background: var(--rose); color: #fff; }
+.cal-pick { margin: 12px 0 10px; color: var(--muted); font-size: .95rem; }
+.cal-pick strong { color: var(--rose); }
+.cal-go { width: 100%; text-align: center; }
+fieldset .cal { margin-bottom: 14px; }
+.ticks { list-style: none; padding: 0; margin: 0; }
+.ticks li { padding-left: 1.6em; position: relative; margin: .4em 0; }
+.ticks li::before { content: "✓"; position: absolute; left: 0; color: var(--rose); font-weight: 800; }
+.addcal { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- IBAN ---------- */
+.iban-card-lead { margin: 0 0 10px; color: var(--muted); }
+.iban-card { border: 2px dashed var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 10px; }
+.iban-row { display: grid; grid-template-columns: 6.5em 1fr auto; align-items: center; gap: 10px; }
+.iban-label { color: var(--muted); font-size: .9rem; }
+.iban-row .iban-code { font-size: 1.12rem; font-weight: 800; color: var(--leaf); }
+.iban-share { justify-self: start; }
+.iban-speed { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0 6px; }
+.iban-speed > div { background: var(--sage); border-radius: 8px; padding: 10px 12px; }
+.iban-speed strong { display: block; color: var(--leaf); margin-bottom: 2px; }
+.iban-speed span { font-size: .93rem; }
+@media (max-width: 560px) {
+  .iban-row { grid-template-columns: 1fr auto; }
+  .iban-label { grid-column: 1 / -1; margin-bottom: -6px; }
+  .iban-speed { grid-template-columns: 1fr; }
+}
+
+/* ---------- Avviso copiato ---------- */
+.toast { position: fixed; z-index: 60; left: 50%; bottom: 90px; transform: translateX(-50%); max-width: calc(100% - 24px);
+         background: var(--leaf); color: #fff; padding: 12px 18px; border-radius: 999px; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+
+/* ---------- Popup Prenota ora ---------- */
+.promo { position: fixed; z-index: 44; left: 12px; right: 12px; bottom: 76px; max-width: 360px; margin: 0 auto;
+         background: #fff; border-radius: 12px; padding: 18px 18px 16px; border-top: 6px solid var(--rose);
+         box-shadow: 0 12px 32px rgba(31,59,45,.28); animation: promo-in .35s ease-out; }
+.promo-kicker { margin: 0 0 2px; font-weight: 700; color: var(--rose); font-size: .95rem; }
+.promo-t { margin: 0 0 12px; font-family: var(--display); font-size: 1.25rem; font-weight: 700; line-height: 1.2; color: var(--leaf); padding-right: 24px; }
+.promo .btn { width: 100%; text-align: center; }
+.promo-x { position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border: 0; background: none; font-size: 1.6rem; line-height: 1; cursor: pointer; color: var(--muted); }
+@keyframes promo-in { from { transform: translateY(20px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (min-width: 761px) { .promo { left: 16px; right: auto; bottom: 16px; margin: 0; } }
+@media (prefers-reduced-motion: reduce) { .promo { animation: none; } }
