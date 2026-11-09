@@ -293,9 +293,30 @@ figure { margin: 0; }
 @media (min-width: 761px) { .consent { bottom: 16px; } }
 
 /* ---------- Lightbox ---------- */
-.lb { position: fixed; inset: 0; z-index: 60; background: rgba(14,26,20,.92); display: flex; align-items: center; justify-content: center; padding: 16px; }
-.lb img { max-height: 88vh; max-width: 100%; width: auto; border-radius: var(--radius); }
-.lb button { position: absolute; top: 12px; right: 12px; }
+.lb { position: fixed; inset: 0; z-index: 70; background: #0b120e; }
+html.lb-open, html.lb-open body { overflow: hidden; }
+.lb-track { position: absolute; inset: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.lb-track::-webkit-scrollbar { display: none; }
+.lb-slide { flex: 0 0 100%; height: 100%; margin: 0; scroll-snap-align: center; scroll-snap-stop: always;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 12px 64px; touch-action: pan-x pinch-zoom; }
+.lb-slide img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 4px; user-select: none; -webkit-user-drag: none; }
+.lb-slide figcaption { color: #e6ece7; font-size: .92rem; text-align: center; margin-top: 10px; max-width: 640px; }
+.lb-slide.is-zoom { overflow: auto; display: block; padding: 0; touch-action: auto; }
+.lb-slide.is-zoom img { max-width: none; max-height: none; width: 220%; }
+.lb-slide.is-zoom figcaption { display: none; }
+.lb-btn { position: absolute; z-index: 2; border: 0; border-radius: 50%; width: 48px; height: 48px; background: rgba(255,255,255,.14);
+          color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.lb-btn:hover { background: rgba(255,255,255,.28); }
+.lb-close { top: 10px; right: 10px; }
+.lb-prev, .lb-next { top: 50%; transform: translateY(-50%); }
+.lb-prev { left: 12px; } .lb-next { right: 12px; }
+.lb-count { position: absolute; top: 18px; left: 18px; margin: 0; color: #fff; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lb-hint { position: absolute; left: 0; right: 0; bottom: 14px; margin: 0; text-align: center; color: rgba(255,255,255,.7); font-size: .85rem; pointer-events: none; }
+@media (max-width: 760px) { .lb-prev, .lb-next { display: none; } }
+@media (hover: hover) { .lb-hint { display: none; } }
+img.zoomable { cursor: zoom-in; }
+.masonry a { cursor: zoom-in; }
 
 .hp { position: absolute; left: -9999px; }
 

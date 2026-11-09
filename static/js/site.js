@@ -30,25 +30,97 @@
     });
   });
 
-  // Lightbox minimale per le gallerie
-  $$("[data-lightbox] a").forEach(function (a) {
-    a.addEventListener("click", function (e) {
-      e.preventDefault();
-      var src = a.getAttribute("href"), alt = ($("img", a) || {}).alt || "";
-      var lb = document.createElement("div");
-      lb.className = "lb"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true");
-      lb.innerHTML = '<img alt=""><button class="btn btn-white" type="button">Chiudi</button>';
-      $("img", lb).src = src; $("img", lb).alt = alt;
-      function close() { lb.remove(); document.removeEventListener("keydown", onKey); a.focus(); }
-      function onKey(ev) { if (ev.key === "Escape") close(); }
-      lb.addEventListener("click", function (ev) { if (ev.target === lb || ev.target.tagName === "BUTTON") close(); });
-      document.addEventListener("keydown", onKey);
-      document.body.appendChild(lb);
-      $("button", lb).focus();
+  // Galleria a schermo intero: tocca una foto, poi scorri col dito (o con le frecce)
+  function bigSrc(img) {
+    var best = img.currentSrc || img.src, bw = 0;
+    (img.getAttribute("srcset") || "").split(",").forEach(function (c) {
+      var p = c.trim().split(/\s+/), w = parseInt(p[1], 10) || 0;
+      if (p[0] && w > bw) { bw = w; best = p[0]; }
+    });
+    return best;
+  }
+  var groups = [];
+  $$("[data-lightbox]").forEach(function (box) {
+    groups.push($$("a", box).map(function (a) { var im = $("img", a); return { el: a, src: a.getAttribute("href"), alt: im ? im.alt : "" }; }));
+  });
+  // Le altre foto del contenuto (home, chioschi, servizi, articoli) diventano cliccabili tutte insieme
+  var loose = $$("main img").filter(function (im) {
+    return !im.closest("a, button, [data-lightbox], .cal, .install, .promo") && (im.getAttribute("width") || 0) >= 300;
+  }).map(function (im) {
+    im.classList.add("zoomable"); im.setAttribute("tabindex", "0"); im.setAttribute("role", "button");
+    return { el: im, src: bigSrc(im), alt: im.alt };
+  });
+  if (loose.length) groups.push(loose);
+
+  function openLb(items, start) {
+    var opener = items[start].el, lb = document.createElement("div");
+    lb.className = "lb"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true"); lb.setAttribute("aria-label", "Foto");
+    lb.innerHTML = '<div class="lb-track"></div><p class="lb-count" aria-live="polite"></p>' +
+      '<button class="lb-btn lb-close" type="button" aria-label="Chiudi">×</button>' +
+      (items.length > 1 ? '<button class="lb-btn lb-prev" type="button" aria-label="Foto precedente">‹</button><button class="lb-btn lb-next" type="button" aria-label="Foto successiva">›</button>' : "") +
+      '<p class="lb-hint">Scorri col dito · tocca due volte per ingrandire</p>';
+    var rail = $(".lb-track", lb), count = $(".lb-count", lb), cur = start;
+    items.forEach(function (it, i) {
+      var sl = document.createElement("figure"); sl.className = "lb-slide";
+      var im = document.createElement("img"); im.alt = it.alt; im.decoding = "async";
+      if (Math.abs(i - start) <= 1) im.src = it.src; else im.setAttribute("data-src", it.src);
+      sl.appendChild(im);
+      if (it.alt) { var cap = document.createElement("figcaption"); cap.textContent = it.alt; sl.appendChild(cap); }
+      rail.appendChild(sl);
+    });
+    function load(i) { var im = rail.children[i] && $("img", rail.children[i]); if (im && im.getAttribute("data-src")) { im.src = im.getAttribute("data-src"); im.removeAttribute("data-src"); } }
+    function update() {
+      cur = Math.round(rail.scrollLeft / rail.clientWidth);
+      count.textContent = (cur + 1) + " / " + items.length;
+      load(cur - 1); load(cur); load(cur + 1);
+    }
+    function go(i) {
+      i = Math.max(0, Math.min(items.length - 1, i));
+      $$(".lb-slide.is-zoom", rail).forEach(function (z) { z.classList.remove("is-zoom"); });
+      rail.scrollTo({ left: i * rail.clientWidth, behavior: "smooth" });
+    }
+    var raf; rail.addEventListener("scroll", function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); }, { passive: true });
+    // Doppio tocco / doppio clic: ingrandisci
+    rail.addEventListener("dblclick", function (e) {
+      var sl = e.target.closest(".lb-slide"); if (!sl) return;
+      sl.classList.toggle("is-zoom");
+      if (sl.classList.contains("is-zoom")) { sl.scrollLeft = (sl.scrollWidth - sl.clientWidth) / 2; sl.scrollTop = (sl.scrollHeight - sl.clientHeight) / 2; }
+    });
+    var closed = false;
+    function close(fromHistory) {
+      if (closed) return; closed = true;
+      lb.remove(); document.documentElement.classList.remove("lb-open");
+      document.removeEventListener("keydown", onKey); window.removeEventListener("popstate", onPop);
+      if (!fromHistory && history.state && history.state.lb) history.back();
+      opener.focus && opener.focus({ preventScroll: true });
+    }
+    function onPop() { close(true); }
+    function onKey(ev) {
+      if (ev.key === "Escape") close();
+      else if (ev.key === "ArrowRight") go(cur + 1);
+      else if (ev.key === "ArrowLeft") go(cur - 1);
+    }
+    lb.addEventListener("click", function (ev) {
+      var t = ev.target;
+      if (t.closest(".lb-close") || t === lb || t.classList.contains("lb-slide")) close();
+      else if (t.closest(".lb-prev")) go(cur - 1);
+      else if (t.closest(".lb-next")) go(cur + 1);
+    });
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(lb);
+    document.documentElement.classList.add("lb-open");
+    rail.scrollLeft = start * rail.clientWidth; update();
+    try { history.pushState({ lb: 1 }, ""); window.addEventListener("popstate", onPop); } catch (e) { /* ok */ }
+    $(".lb-close", lb).focus({ preventScroll: true });
+    track("foto", items[start].src);
+  }
+  groups.forEach(function (items) {
+    items.forEach(function (it, i) {
+      it.el.addEventListener("click", function (e) { e.preventDefault(); openLb(items, i); });
+      if (it.el.tagName === "IMG") it.el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openLb(items, i); } });
     });
   });
 
-  // Misurazione clic su Chiama / WhatsApp (attiva solo se c'è il tag Google e il consenso)
   function track(name, label) {
     if (typeof window.gtag !== "function") return;
     window.gtag("event", name, { event_category: "contatto", event_label: label });
