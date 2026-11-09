@@ -159,6 +159,12 @@
         if (err) err.hidden = !bad;
         if (bad && ok) { input.focus(); ok = false; }
       });
+      var pv = $("#f-privacy");
+      if (pv) {
+        var pf = pv.closest(".field");
+        pf.classList.toggle("has-error", !pv.checked); $(".err", pf).hidden = pv.checked;
+        if (!pv.checked && ok) { pv.focus(); ok = false; }
+      }
       if (!ok) return;
       var val = function (id) { var el = $(id); return el ? el.value.trim() : ""; };
       var kind = form.getAttribute("data-kind");
@@ -202,11 +208,16 @@
     });
   }
 
-  // Consenso cookie (presente solo quando è attivo il tag Google)
+  // Consenso cookie (GDPR): scelta salvata per 6 mesi, poi la richiediamo
   var banner = $("#consenso");
-  function choice() { try { return localStorage.getItem("consenso"); } catch (e) { return null; } }
+  function choice() {
+    try {
+      var c = JSON.parse(localStorage.getItem("consenso-v2") || "null");
+      return c && Date.now() - c.t < 1000 * 60 * 60 * 24 * 182 ? c.v : null;
+    } catch (e) { return null; }
+  }
   function setChoice(v) {
-    try { localStorage.setItem("consenso", v); } catch (e) { /* storage non disponibile */ }
+    try { localStorage.setItem("consenso-v2", JSON.stringify({ v: v, t: Date.now() })); localStorage.setItem("consenso", v); } catch (e) { /* storage non disponibile */ }
     if (typeof window.gtag === "function") {
       var g = v === "si" ? "granted" : "denied";
       window.gtag("consent", "update", { ad_storage: g, ad_user_data: g, ad_personalization: g, analytics_storage: g });
@@ -220,7 +231,7 @@
     });
   }
   var reset = $("[data-consent-reset]");
-  if (reset && banner) reset.addEventListener("click", function () { banner.hidden = false; });
+  $$("[data-consent-reset]").forEach(function (r) { r.addEventListener("click", function () { if (banner) { banner.hidden = false; $("[data-consent='si']", banner).focus(); } }); });
 
   // Pre-selezione da link (es. /prenota/?servizio=bouquet-da-sposa)
   var qs = new URLSearchParams(location.search);
@@ -400,7 +411,7 @@
     var seen = function () { try { return Date.now() - Number(localStorage.getItem("promo-chiuso") || 0) < 1000 * 60 * 60 * 24 * 3; } catch (e) { return false; } };
     var shown = false;
     var show = function () {
-      if (shown || seen() || (inst && !inst.hidden)) return;
+      if (shown || seen() || (inst && !inst.hidden) || ($("#consenso") && !$("#consenso").hidden)) return;
       shown = true; promo.hidden = false; track("promo", "mostrato");
     };
     var hide = function () { promo.hidden = true; try { localStorage.setItem("promo-chiuso", String(Date.now())); } catch (e) { /* ok */ } };

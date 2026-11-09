@@ -24,7 +24,7 @@
 <meta name="apple-mobile-web-app-title" content="Fiori Seddrak">
 <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
 <link rel="preload" href="/static/fonts/bricolage.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/static/css/site.css?v=4">
+<link rel="stylesheet" href="/static/css/site.css?v=5">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://fioriseddrak.it/#organizzazione", "name": "Piante e Fiori Roma di Seddrak", "alternateName": ["Piante e Fiori Seddrak", "Piante e Fiori Seddrack", "Fiori Seddrak", "Fiori Seddrack", "Fiorista Seddrak Roma"], "url": "https://fioriseddrak.it/", "logo": "https://fioriseddrak.it/static/logo.svg", "email": "larosadeldesertoseddrak@gmail.com", "telephone": "+393899962511", "founder": {"@type": "Person", "name": "Youssef Seddrak"}, "sameAs": [], "description": "Fiorista a Roma con due chioschi di fiori e piante: Largo Ferdinando Gregorovius e Largo Santi Martiri dell'Uganda."}, {"@type": "Florist", "@id": "https://fioriseddrak.it/fioraio-largo-ferdinando-gregorovius/#chiosco", "name": "Piante e Fiori Roma di Seddrak – Largo Gregorovius", "parentOrganization": {"@id": "https://fioriseddrak.it/#organizzazione"}, "url": "https://fioriseddrak.it/fioraio-largo-ferdinando-gregorovius/", "telephone": "+393899962511", "image": "https://fioriseddrak.it/static/img/youssef-seddrak-cuore-di-rose-960.webp", "priceRange": "€€", "address": {"@type": "PostalAddress", "streetAddress": "Largo Ferdinando Gregorovius", "postalCode": "00179", "addressLocality": "Roma", "addressRegion": "RM", "addressCountry": "IT"}, "geo": {"@type": "GeoCoordinates", "latitude": 41.87207, "longitude": 12.51047}, "hasMap": "https://www.google.com/maps/search/?api=1&query=Largo+Ferdinando+Gregorovius+00179+Roma", "areaServed": [{"@type": "Place", "name": "Via Macedonia, Roma"}, {"@type": "Place", "name": "Appio Latino, Roma"}, {"@type": "Place", "name": "Tuscolano, Roma"}, {"@type": "Place", "name": "Re di Roma, Roma"}, {"@type": "Place", "name": "Furio Camillo, Roma"}]}, {"@type": "Florist", "@id": "https://fioriseddrak.it/fioraio-largo-santi-martiri-uganda/#chiosco", "name": "Piante e Fiori Roma di Seddrak – Largo Santi Martiri dell'Uganda", "parentOrganization": {"@id": "https://fioriseddrak.it/#organizzazione"}, "url": "https://fioriseddrak.it/fioraio-largo-santi-martiri-uganda/", "telephone": "+393899962511", "image": "https://fioriseddrak.it/static/img/chiosco-fiori-roma-960.webp", "priceRange": "€€", "address": {"@type": "PostalAddress", "streetAddress": "Largo Santi Martiri dell'Uganda", "postalCode": "00147", "addressLocality": "Roma", "addressRegion": "RM", "addressCountry": "IT"}, "geo": {"@type": "GeoCoordinates", "latitude": 41.8457, "longitude": 12.48768}, "hasMap": "https://www.google.com/maps/search/?api=1&query=Largo+Santi+Martiri+dell%27Uganda+00147+Roma", "areaServed": [{"@type": "Place", "name": "Montagnola, Roma"}, {"@type": "Place", "name": "Laurentina, Roma"}, {"@type": "Place", "name": "EUR, Roma"}, {"@type": "Place", "name": "Ardeatino, Roma"}, {"@type": "Place", "name": "Garbatella, Roma"}]}]}</script>
 
 
@@ -171,7 +171,8 @@
       <p><a href="https://wa.me/393899962511" rel="noopener">WhatsApp</a><br>
          <a href="mailto:larosadeldesertoseddrak@gmail.com">larosadeldesertoseddrak@gmail.com</a></p>
       <p><a href="/pagamento/">Pagamento online</a><br>
-         <a href="/privacy/">Privacy</a> e <a href="/cookie-policy/">cookie</a></p>
+         <a href="/privacy/">Privacy policy</a> · <a href="/cookie-policy/">Cookie policy</a><br>
+         <button class="linkbtn" type="button" data-consent-reset>Preferenze cookie</button></p>
     </div>
   </div>
   <div class="wrap footer-legal">
@@ -186,7 +187,12 @@
   <a class="callbar-btn callbar-wa" href="https://wa.me/393899962511" rel="noopener" data-wa="bar">WhatsApp</a>
 </div>
 
-
+<div class="consent" id="consenso" hidden role="dialog" aria-labelledby="consenso-t">
+  <button class="consent-x" type="button" data-consent="no" aria-label="Chiudi e rifiuta">×</button>
+  <p class="consent-t" id="consenso-t"><strong>Rispettiamo la tua privacy</strong></p>
+  <p>Usiamo solo strumenti tecnici necessari al sito. Mappe e pagamento PayPal si caricano solo se li apri tu. Leggi la <a href="/privacy/">privacy policy</a> e la <a href="/cookie-policy/">cookie policy</a>.</p>
+  <div class="consent-btns"><button class="btn btn-light" type="button" data-consent="no">Rifiuta</button> <a class="btn btn-ghost" href="/cookie-policy/">Personalizza</a> <button class="btn btn-rose" type="button" data-consent="si">Accetta</button></div>
+</div>
 <div class="install" id="installa" hidden role="dialog" aria-labelledby="installa-t">
   <img src="/static/icon-192.png" alt="" width="48" height="48">
   <div class="install-text">
@@ -207,6 +213,6 @@
   <a class="btn btn-rose" href="/prenota/" data-promo-go>Prenota ora!</a>
 </div>
 
-<script src="/static/js/site.js?v=4" defer></script>
+<script src="/static/js/site.js?v=5" defer></script>
 </body>
 </html>
