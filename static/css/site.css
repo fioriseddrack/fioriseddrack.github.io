@@ -154,10 +154,8 @@ figure { margin: 0; }
 .tile-title { display: block; font-family: var(--display); font-weight: 650; font-size: 1.2rem; color: var(--leaf); }
 .tile:hover .tile-title { color: var(--rose); text-decoration: underline; }
 .tile-lead { display: block; color: var(--muted); font-size: .97rem; }
-.tile-9 { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; align-items: center; }
-.tile-9 img { aspect-ratio: 16 / 9; }
-.tile-9 .tile-title { font-size: 1.6rem; }
-.tile-9 .tile-lead { font-size: 1.05rem; }
+.tile-9, .tile-10 { grid-column: span 3; }
+.tile-9 img, .tile-10 img { aspect-ratio: 16 / 10; }
 .tiles-compact .tile { grid-column: span 2; display: flex; }
 .tiles-compact .tile img { aspect-ratio: 4 / 3; }
 
@@ -329,8 +327,7 @@ img.zoomable { cursor: zoom-in; }
   .hp-main { aspect-ratio: 1 / 1; }
   .hp-a, .hp-b { display: none; }
   .tiles { grid-template-columns: 1fr 1fr; }
-  .tile, .tile-1, .tile-2, .tiles-compact .tile { grid-column: span 1; }
-  .tile-9 { grid-column: 1 / -1; }
+  .tile, .tile-1, .tile-2, .tile-9, .tile-10, .tiles-compact .tile { grid-column: span 1; }
   .posts { grid-template-columns: 1fr 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .strip { grid-template-columns: repeat(2, 1fr); }
@@ -339,7 +336,6 @@ img.zoomable { cursor: zoom-in; }
 @media (max-width: 560px) {
   .tiles, .posts, .footer-grid, .field-row { grid-template-columns: 1fr; }
   .tile-1 { grid-column: span 1; }
-  .tile-9 { display: flex; }
   .section { padding: 48px 0; }
   .kiosk-actions .btn { flex: 1 1 auto; }
   .brand-sub { display: none; }
